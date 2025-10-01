@@ -1,4 +1,4 @@
-# MyAppList
+# Android 零权限获取桌面级应用列表方案
 
 ## 1. 背景
 
