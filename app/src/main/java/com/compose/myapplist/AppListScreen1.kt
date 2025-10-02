@@ -50,8 +50,8 @@ import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppListScreen(
-    pm: PackageManager,
+fun AppListScreen1(
+    pm: PackageManager = LocalContext.current.packageManager,
     onBackClick: () -> Unit
 ) {
     var apps by remember { mutableStateOf(listOf<AppInfo>()) }
@@ -69,7 +69,7 @@ fun AppListScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("应用列表") },
+                title = { Text("应用列表1") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
