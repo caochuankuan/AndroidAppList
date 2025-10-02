@@ -1,5 +1,7 @@
 # Android 零权限获取桌面级应用列表方案
 
+此处只介绍方案一，剩下三种方案参考代码AppListScreen2-3-4
+
 ## 1. 背景
 
 1. **QUERY_ALL_PACKAGES 权限方案**：Google Play 列入敏感权限，普通场景直接拒审；国内商店也需视频+用途说明。
