@@ -1,179 +1,19 @@
 package com.compose.myapplist
 
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.compose.myapplist.ui.theme.MyAppListTheme
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.DateFormat
-import java.util.*
-import androidx.core.graphics.createBitmap
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { MyAppListTheme { AppListScreen(packageManager) } }
-    }
-}
-
-@Composable
-fun AppListScreen(pm: PackageManager) {
-    var apps by remember { mutableStateOf(listOf<AppInfo>()) }
-    var isLoading by remember { mutableStateOf(true) }
-    val scope = rememberCoroutineScope()
-    val dateFmt = remember { DateFormat.getDateTimeInstance() }
-
-    LaunchedEffect(Unit) {
-        scope.launch {
-            apps = loadApps(pm)
-            isLoading = false
-        }
-    }
-
-    Scaffold { padding ->
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            when {
-                isLoading -> Loading()
-                apps.isEmpty() -> Empty()
-                else -> AppList(apps, dateFmt)
+        setContent {
+            MyAppListTheme {
+                Navigation()
             }
         }
     }
 }
-
-@Composable
-private fun Loading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator()
-            Spacer(Modifier.height(8.dp))
-            Text("正在加载应用列表...")
-        }
-    }
-}
-
-@Composable
-private fun Empty() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("暂无应用", style = MaterialTheme.typography.bodyLarge)
-    }
-}
-
-@Composable
-private fun AppList(apps: List<AppInfo>, dateFmt: DateFormat) {
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(8.dp)
-    ) {
-        items(apps) { AppRow(it, dateFmt) }
-    }
-}
-
-@Composable
-private fun AppRow(app: AppInfo, dateFmt: DateFormat) {
-    val context = LocalContext.current
-    val bmp = remember(app.icon) {
-        (app.icon as? android.graphics.drawable.BitmapDrawable)?.bitmap
-            ?: drawableToBitmap(app.icon)
-    }
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        Column(Modifier.padding(12.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    bitmap = bmp.asImageBitmap(),
-                    contentDescription = app.name,
-                    modifier = Modifier.size(40.dp)
-                )
-                Spacer(Modifier.width(12.dp))
-                Column {
-                    Text(app.name, style = MaterialTheme.typography.bodyLarge)
-                    Text(app.packageName, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-            Spacer(Modifier.height(4.dp))
-            Text("安装时间: ${dateFmt.format(Date(app.installTime))}")
-            Text("更新时间: ${dateFmt.format(Date(app.updateTime))}")
-            Text("APK 大小: ${android.text.format.Formatter.formatFileSize(context, app.apkSize)}")
-        }
-    }
-}
-
-private suspend fun loadApps(pm: PackageManager): List<AppInfo> = withContext(Dispatchers.IO) {
-
-    val main = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
-    val resolveInfos = pm.queryIntentActivities(main, PackageManager.MATCH_ALL)
-
-    resolveInfos
-        .distinctBy { it.activityInfo.packageName }          // 去重
-        .mapNotNull { ri ->                                   // 异常吃掉
-            val pkg = ri.activityInfo.packageName
-
-            val pInfo = runCatching {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                    pm.getPackageInfo(pkg, PackageManager.PackageInfoFlags.of(0))
-                else @Suppress("DEPRECATION") pm.getPackageInfo(pkg, 0)
-            }.getOrNull() ?: return@mapNotNull null
-
-            val appInfo = runCatching {
-                pm.getApplicationInfo(pkg, 0)
-            }.getOrNull() ?: return@mapNotNull null
-
-            val apkFile = java.io.File(appInfo.sourceDir)
-            AppInfo(
-                name = ri.loadLabel(pm).toString(),
-                icon = ri.loadIcon(pm),
-                packageName = pkg,
-                installTime = pInfo.firstInstallTime,
-                updateTime = pInfo.lastUpdateTime,
-                apkSize = apkFile.length()
-            )
-        }
-        .sortedBy { it.name.lowercase() }
-}
-
-private fun drawableToBitmap(drawable: android.graphics.drawable.Drawable): android.graphics.Bitmap {
-    if (drawable is android.graphics.drawable.BitmapDrawable && drawable.bitmap != null) return drawable.bitmap
-    val w = if (drawable.intrinsicWidth > 0) drawable.intrinsicWidth else 1
-    val h = if (drawable.intrinsicHeight > 0) drawable.intrinsicHeight else 1
-    val bmp = createBitmap(w, h)
-    val canvas = android.graphics.Canvas(bmp)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-    return bmp
-}
-
-data class AppInfo(
-    val name: String,
-    val icon: android.graphics.drawable.Drawable,
-    val packageName: String,
-    val installTime: Long,
-    val updateTime: Long,
-    val apkSize: Long
-)
