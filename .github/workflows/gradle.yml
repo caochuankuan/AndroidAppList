@@ -1,0 +1,55 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for the release'
+        required: false  # 允许不设置 tag_name
+        default: ''
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Set Tag Name
+      id: set_tag_name
+      run: |
+        # 如果提供了 tag_name 输入，则使用它，否则使用默认版本号
+        if [[ -z "${{ github.event.inputs.tag_name }}" ]]; then
+          TAG="v1.0.0"
+        else
+          TAG="${{ github.event.inputs.tag_name }}"
+        fi
+        echo "TAG=$TAG" >> $GITHUB_ENV
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
+
+    # 创建 GitHub Release
+    - name: Create GitHub Release
+      id: release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.event.inputs.tag_name || env.TAG_NAME }}
+        files: app/build/outputs/apk/debug/*.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
