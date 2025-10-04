@@ -23,6 +23,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyAppList"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="app_description_title"
+            android:resource="@string/app_description_title" />
+        <meta-data
+            android:name="app_description_content"
+            android:resource="@string/app_description_content" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
