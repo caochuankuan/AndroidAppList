@@ -41,6 +41,111 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 每个别名都是一个可启用/禁用的“启动入口”，默认全部禁用 -->
+        <activity-alias
+            android:name=".AliasTaobao"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/taobao"
+            android:label="淘宝"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    
+        <activity-alias
+            android:name=".AliasWeixin"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/weixin"
+            android:label="微信"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    
+        <activity-alias
+            android:name=".AliasZhihu"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/zhihu"
+            android:label="知乎"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    
+        <activity-alias
+            android:name=".AliasGaode"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/gaode"
+            android:label="高德地图"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    
+        <activity-alias
+            android:name=".AliasDeepseek"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/deepseek"
+            android:label="DeepSeek"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    
+        <activity-alias
+            android:name=".AliasDoubao"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/doubao"
+            android:label="豆包"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    
+        <activity-alias
+            android:name=".AliasDouyin"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/douyin"
+            android:label="抖音"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    
+        <activity-alias
+            android:name=".AliasMiaoqu"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/miaoqu"
+            android:label="妙趣"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
     </application>
 
 </manifest>
