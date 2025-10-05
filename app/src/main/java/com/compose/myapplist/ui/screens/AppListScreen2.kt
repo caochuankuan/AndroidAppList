@@ -1,4 +1,4 @@
-package com.compose.myapplist
+package com.compose.myapplist.ui.screens
 
 import android.os.Build
 import android.content.pm.PackageManager

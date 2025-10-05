@@ -1,5 +1,6 @@
-package com.compose.myapplist
+package com.compose.myapplist.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import com.compose.myapplist.R
 import com.compose.myapplist.utils.IconSwitcher
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,10 +126,10 @@ fun MainPage(
                     Button(
                         onClick = {
                             IconSwitcher.restoreDefaultIcon(context)
-                            android.widget.Toast.makeText(
+                            Toast.makeText(
                                 context,
                                 "已恢复默认图标",
-                                android.widget.Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT
                             ).show()
                         },
                         modifier = Modifier
@@ -200,10 +202,10 @@ private fun IconPreviewRow(
                         .size(64.dp)
                         .clickable {
                             onIconClick(icon)
-                            android.widget.Toast.makeText(
+                            Toast.makeText(
                                 context,
                                 "已切换为 ${icon.name}",
-                                android.widget.Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT
                             ).show()
                         }
                 )

@@ -1,8 +1,13 @@
-package com.compose.myapplist
+package com.compose.myapplist.ui.screens
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
+import android.text.format.Formatter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +50,7 @@ import androidx.core.graphics.createBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.text.DateFormat
 import java.util.Date
 
@@ -128,7 +134,7 @@ private fun AppList(apps: List<AppInfo>, dateFmt: DateFormat) {
 private fun AppRow(app: AppInfo, dateFmt: DateFormat) {
     val context = LocalContext.current
     val bmp = remember(app.icon) {
-        (app.icon as? android.graphics.drawable.BitmapDrawable)?.bitmap
+        (app.icon as? BitmapDrawable)?.bitmap
             ?: drawableToBitmap(app.icon)
     }
 
@@ -152,7 +158,7 @@ private fun AppRow(app: AppInfo, dateFmt: DateFormat) {
             Spacer(Modifier.height(4.dp))
             Text("安装时间: ${dateFmt.format(Date(app.installTime))}")
             Text("更新时间: ${dateFmt.format(Date(app.updateTime))}")
-            Text("APK 大小: ${android.text.format.Formatter.formatFileSize(context, app.apkSize)}")
+            Text("APK 大小: ${Formatter.formatFileSize(context, app.apkSize)}")
         }
     }
 }
@@ -177,7 +183,7 @@ private suspend fun loadApps(pm: PackageManager): List<AppInfo> = withContext(Di
                 pm.getApplicationInfo(pkg, 0)
             }.getOrNull() ?: return@mapNotNull null
 
-            val apkFile = java.io.File(appInfo.sourceDir)
+            val apkFile = File(appInfo.sourceDir)
             AppInfo(
                 name = ri.loadLabel(pm).toString(),
                 icon = ri.loadIcon(pm),
@@ -190,12 +196,12 @@ private suspend fun loadApps(pm: PackageManager): List<AppInfo> = withContext(Di
         .sortedBy { it.name.lowercase() }
 }
 
-private fun drawableToBitmap(drawable: android.graphics.drawable.Drawable): android.graphics.Bitmap {
-    if (drawable is android.graphics.drawable.BitmapDrawable && drawable.bitmap != null) return drawable.bitmap
+private fun drawableToBitmap(drawable: Drawable): Bitmap {
+    if (drawable is BitmapDrawable && drawable.bitmap != null) return drawable.bitmap
     val w = if (drawable.intrinsicWidth > 0) drawable.intrinsicWidth else 1
     val h = if (drawable.intrinsicHeight > 0) drawable.intrinsicHeight else 1
     val bmp = createBitmap(w, h)
-    val canvas = android.graphics.Canvas(bmp)
+    val canvas = Canvas(bmp)
     drawable.setBounds(0, 0, canvas.width, canvas.height)
     drawable.draw(canvas)
     return bmp
@@ -203,7 +209,7 @@ private fun drawableToBitmap(drawable: android.graphics.drawable.Drawable): andr
 
 data class AppInfo(
     val name: String,
-    val icon: android.graphics.drawable.Drawable,
+    val icon: Drawable,
     val packageName: String,
     val installTime: Long,
     val updateTime: Long,

@@ -1,10 +1,15 @@
-package com.compose.myapplist
+package com.compose.myapplist.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.compose.myapplist.ui.screens.MainPage
+import com.compose.myapplist.ui.screens.AppListScreen1
+import com.compose.myapplist.ui.screens.AppListScreen2
+import com.compose.myapplist.ui.screens.AppListScreen3
+import com.compose.myapplist.ui.screens.AppListScreen4
 
 @Composable
 fun Navigation(
